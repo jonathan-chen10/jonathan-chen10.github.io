@@ -1,2 +1,2 @@
 # jonathan-chen10.github.io
-My personal site.
+My personal site. Still in progress.
