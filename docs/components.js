@@ -24,7 +24,7 @@ class="navbar navbar-expand-md navbar-light dark-orange"
         <a class="nav-link active" aria-current="page" href="#">Home</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="./resume.pdf">Resume</a>
+        <a class="nav-link" href="./resume.pdf">Resume (pdf)</a>
       </li>
     </ul>
   </div>

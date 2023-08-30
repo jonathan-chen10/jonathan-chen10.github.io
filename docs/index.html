@@ -13,6 +13,7 @@
       crossorigin="anonymous"
     />
     <link href="./style.css" rel="stylesheet" />
+
     <!-- Add JS, jQuery-->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
     <script src="components.js"></script>
@@ -27,14 +28,50 @@
   </head>
 
   <body>
-    <!--<template id="common-navbar"></template>-->
+    <!--<div id="navbar-header">
+      <template id="common-navbar"></template>
+    </div>-->
+    <div
+      id="big-header"
+      class="container-fluid dark-orange"
+      style="padding: 10px 10px"
+    >
+      <h1 id="big-name">Jonathan Chen</h1>
+      <div class="icons-row">
+        <a href="https://www.linkedin.com/in/jonathan-chen10/">
+          <img src="./assets/LI-In-Bug.png" alt="LinkedIn icon" class="icon" />
+        </a>
+        <a href="https://github.com/jonathan-chen10">
+          <img src="./assets/github-mark.png" alt="GitHub icon" class="icon" />
+        </a>
+        <a href="./resume.pdf">
+          <img src="./assets/resume-icon.png" alt="resume icon" class="icon" />
+        </a>
+      </div>
+    </div>
 
     <div class="container-fluid pt-3">
-      <h2>work in progress...</h2>
-      <p>
-        This is the personal website of Jonathan Chen, student at Northeastern
-        University. Check back soon!
+      <p class="bold italics">
+        I am looking for co-op/internship opportunities within the term of
+        January&ndash;August 2024!
       </p>
+      <hr />
+      <p>
+        I'm a student at Northeastern University graduating May 2025, studying
+        computer science.
+      </p>
+      <p>
+        I am committed to
+        <span class="bold">quality</span>,
+        <span class="bold">reliability</span> and
+        <span class="bold">positive impact</span> in all that I do.
+      </p>
+      <p>
+        I enjoy writing software,
+        <span class="bold">web development</span> in particular. I love to learn
+        and try new technologies.
+      </p>
+      <p class="italics">More to come soon...!</p>
     </div>
   </body>
 </html>

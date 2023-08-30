@@ -1,3 +1,54 @@
+body {
+  background-color: #fca;
+}
+
+.bold {
+  font-weight: bold;
+}
+
+.italics {
+  font-style: italic;
+}
+
+.hidden {
+  display: none;
+}
+
+.icon {
+  height: 32px;
+}
+
+.icons-row {
+  display: inline-block;
+  margin-left: 20px;
+  margin-bottom: 24px;
+  position: relative;
+  display: flex;
+}
+
+.icons-row a {
+  align-self: flex-end;
+  margin-right: 5px;
+}
+
 .dark-orange {
-  background-color: #e60;
+  background-color: #e85;
+}
+
+a:has(.icon) {
+  text-decoration: none;
+}
+
+#big-name {
+  font-size: 10vw;
+}
+
+#big-header {
+  display: flex;
+}
+
+@media screen and (min-width: 720px) {
+  #big-name {
+    font-size: 72px;
+  }
 }
