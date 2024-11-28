@@ -43,10 +43,6 @@ a:has(.icon) {
   font-size: 10vw;
 }
 
-#big-header {
-  display: flex;
-}
-
 @media screen and (min-width: 720px) {
   #big-name {
     font-size: 72px;
