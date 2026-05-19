@@ -7,3 +7,5 @@ _site/
 
 *.bak
 *.draft.*
+
+blog-generator/target
