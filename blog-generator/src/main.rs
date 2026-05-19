@@ -5,6 +5,9 @@ use std::path::PathBuf;
 use anyhow::Error;
 use serde::Deserialize;
 
+mod discover;
+use discover::discover;
+
 #[derive(Debug, Clone, Deserialize)]
 pub struct Config {
     input_dir: PathBuf,
@@ -19,6 +22,6 @@ fn main() -> Result<(), Error> {
     let config_str = fs::read_to_string(&config_path)?;
     let config: Config = toml::from_str(&config_str)?;
 
-    println!("{:#?}", config);
+    println!("{:#?}", discover(&config.input_dir));
     Ok(())
 }

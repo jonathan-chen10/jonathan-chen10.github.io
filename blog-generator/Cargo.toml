@@ -8,3 +8,4 @@ anyhow = "1.0.102"
 chrono = "0.4.44"
 serde = { version = "1.0.228", features = ["derive"] }
 toml = "1.1.2"
+walkdir = "2.5.0"
