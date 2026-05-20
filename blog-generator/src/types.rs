@@ -1,40 +1,48 @@
 use std::collections::HashMap;
 use std::path::PathBuf;
 
+use chrono;
 use serde::{Deserialize, Serialize};
 
 /// Represents data read from frontmatter block.
 #[derive(Debug, Clone, Deserialize)]
 pub struct Frontmatter {
-    title: String,
-    date_created: chrono::NaiveDate,
-    date_modified: Option<chrono::NaiveDate>,
-    tags: Vec<String>,
+    pub title: String,
+    pub date_created: chrono::NaiveDate,
+    pub date_modified: Option<chrono::NaiveDate>,
+    pub tags: Vec<String>,
     #[serde(default)]
-    draft: bool
+    pub draft: bool
 }
 
 #[derive(Debug, Clone, Serialize)]
 pub struct TocEntry {
-    level: u32,   // h1 to h6
-    text: String,
-    id: String,
+    pub level: u8,   // h1 to h6
+    pub text: String,
+    pub id: String,
+}
+
+#[derive(Debug, Clone)]
+pub struct TocNode {
+    pub level: u8,
+    pub data: Option<TocEntry>,
+    pub children: Vec<TocNode>
 }
 
 #[derive(Debug, Clone)]
 pub struct Post {
-    frontmatter: Frontmatter,
-    html: String,
-    slug: String,
-    toc: Vec<TocEntry>,
+    pub meta: Frontmatter,
+    pub html: String,
+    pub slug: String,
+    pub toc: Vec<TocEntry>,
 }
 
 pub struct SiteIndex {
-    posts: Vec<Post>,
-    tags: HashMap<String, Vec<Post>>,
+    pub posts: Vec<Post>,
+    pub tags: HashMap<String, Vec<Post>>,
 }
 
 pub struct OutputFile {
-    path_relative: PathBuf,
-    html: String,
+    pub path_relative: PathBuf,
+    pub html: String,
 }

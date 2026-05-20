@@ -6,7 +6,10 @@ use anyhow::Error;
 use serde::Deserialize;
 
 mod discover;
+mod parse;
+mod types;
 use discover::discover;
+use parse::parse;
 
 #[derive(Debug, Clone, Deserialize)]
 pub struct Config {
@@ -22,6 +25,19 @@ fn main() -> Result<(), Error> {
     let config_str = fs::read_to_string(&config_path)?;
     let config: Config = toml::from_str(&config_str)?;
 
-    println!("{:#?}", discover(&config.input_dir));
+    match parse(discover(&config.input_dir)) {
+        Ok(res) => {
+            for post in res {
+                println!("{}", post.meta.title);
+                println!("{}", post.meta.date_created);
+                println!("{}", post.slug);
+                println!("{}", post.html);
+                println!("{:?}", post.toc);
+            }
+        }
+        Err(e) => {
+            println!("Error: {}", e);
+        }
+    }
     Ok(())
 }
