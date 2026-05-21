@@ -15,13 +15,15 @@ pub fn parse(paths: Vec<PathBuf>) -> Result<Vec<Post>> {
 }
 
 fn parse_one(path: &PathBuf) -> Result<Option<Post>> {
-    let raw = fs::read_to_string(path)?;
+    let raw = fs::read_to_string(path)
+        .with_context(|| format!("reading {}", path.display()))?;
     let (frontmatter_str, body) = split_frontmatter(&raw);
 
     match frontmatter_str {
         None => Ok(None),
         Some(s) => {
-            let frontmatter: Frontmatter = serde_yaml::from_str(s)?;
+            let frontmatter: Frontmatter = serde_yaml::from_str(s)
+                .with_context(|| format!("parsing frontmatter in {}", path.display()))?;
             if frontmatter.draft {
                 return Ok(None);
             }
