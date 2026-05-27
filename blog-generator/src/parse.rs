@@ -65,9 +65,6 @@ fn process_special_cases(event: Event<'_>) -> Event<'_> {
         Event::DisplayMath(math) => {
             Event::Html(format!("<span class=\"math-display\">{math}</span>").into())
         }
-        Event::FootnoteReference(n) => {
-            Event::Html(format!("<sup><a id=\"fnref-{n}\" href=\"#fn-{n}\">{n}</a></sup>").into())
-        }
         event => event 
     }
 }

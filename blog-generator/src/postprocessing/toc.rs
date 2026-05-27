@@ -20,8 +20,24 @@ struct TocNode {
 }
 
 pub fn apply<'a>(events: &[Event<'a>]) -> Result<Vec<Event<'a>>> {
-    let toc_event = Event::Html(toc_tree_to_html(&toc_tree(&build_toc(events))).into());
-    Ok(std::iter::once(toc_event).chain(events.iter().cloned()).collect())
+    let toc_entries = build_toc(events);
+    let toc_event = Event::Html(toc_tree_to_html(&toc_tree(&toc_entries)).into());
+
+    let mut heading_ids = toc_entries.into_iter().map(|e| e.id);
+
+    let events_with_ids = events.iter().map(|event| match event {
+        Event::Start(Tag::Heading { level, classes, attrs, .. }) => {
+            Event::Start(Tag::Heading {
+                level: *level,
+                id: heading_ids.next().map(Into::into),
+                classes: classes.clone(),
+                attrs: attrs.clone(),
+            })
+        }
+        other => other.clone(),
+    });
+
+    Ok(std::iter::once(toc_event).chain(events_with_ids).collect())
 }
 
 fn build_toc(events: &[Event<'_>]) -> Vec<TocEntry> {
