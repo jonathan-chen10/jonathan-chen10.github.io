@@ -27,7 +27,7 @@ fn main() -> Result<(), Error> {
     let config_str = fs::read_to_string(&config_path)?;
     let config: Config = toml::from_str(&config_str)?;
 
-    match parse(discover(&config.input_dir)) {
+    match parse(&discover(&config.input_dir)) {
         Ok(res) => {
             for post in res {
                 println!("{}", post.meta.title);
