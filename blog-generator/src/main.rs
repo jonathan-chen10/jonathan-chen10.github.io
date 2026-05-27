@@ -34,7 +34,6 @@ fn main() -> Result<(), Error> {
                 println!("{}", post.meta.date_created);
                 println!("{}", post.slug);
                 println!("{}", post.html);
-                println!("{:?}", post.toc);
             }
         }
         Err(e) => {

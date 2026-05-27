@@ -3,8 +3,21 @@ use std::collections::BTreeSet;
 use anyhow::Result;
 use pulldown_cmark::{Event, Tag, TagEnd};
 
-use crate::types::{TocEntry, TocNode};
 use crate::utils::slugify;
+
+#[derive(Debug, Clone)]
+struct TocEntry {
+    level: u8,
+    text: String,
+    id: String,
+}
+
+#[derive(Debug, Clone)]
+struct TocNode {
+    level: u8,
+    data: Option<TocEntry>,
+    children: Vec<TocNode>,
+}
 
 pub fn apply<'a>(events: &[Event<'a>]) -> Result<Vec<Event<'a>>> {
     let toc_event = Event::Html(toc_tree_to_html(&toc_tree(&build_toc(events))).into());

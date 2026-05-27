@@ -42,7 +42,6 @@ fn parse_one(path: &Path) -> Result<Option<Post>> {
                 meta: frontmatter,
                 html,
                 slug,
-                toc: vec![],
             }))
         }
     }
