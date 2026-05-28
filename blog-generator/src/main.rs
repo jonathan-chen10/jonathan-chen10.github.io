@@ -6,11 +6,13 @@ use anyhow::Error;
 use serde::Deserialize;
 
 mod discover;
+mod index;
 mod parse;
 mod postprocessing;
 mod types;
 mod utils;
 use discover::discover;
+use index::index;
 use parse::parse;
 
 #[derive(Debug, Clone, Deserialize)]
@@ -29,11 +31,16 @@ fn main() -> Result<(), Error> {
 
     match parse(&discover(&config.input_dir)) {
         Ok(res) => {
-            for post in res {
-                println!("{}", post.meta.title);
-                println!("{}", post.meta.date_created);
-                println!("{}", post.slug);
-                println!("{}", post.html);
+            let idx = index(res);
+            for p in &idx.posts {
+                println!("{}", p.meta.title);
+            }
+            println!();
+            for (tag, posts) in &idx.tags {
+                println!("{} :", tag);
+                for p in posts {
+                    println!("- {}", p.meta.title);
+                }
             }
         }
         Err(e) => {

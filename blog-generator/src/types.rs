@@ -22,6 +22,7 @@ pub struct Post {
     pub slug: String,
 }
 
+#[derive(Debug)]
 pub struct SiteIndex {
     pub posts: Vec<Post>,
     pub tags: HashMap<String, Vec<Post>>,
