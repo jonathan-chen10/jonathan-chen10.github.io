@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block title %}#{{ tag }} — Jonathan Chen{% endblock %}
+
+{% block content %}
+  <h1>#{{ tag }}</h1>
+  <p><a href="/blog/tags/">All tags</a></p>
+  <hr />
+  {% if posts %}
+    <ul class="list-unstyled">
+      {% for post in posts %}
+        <li class="mb-4">
+          <div>
+            <a href="/blog/posts/{{ post.slug }}.html">{{ post.title }}</a>
+            <span class="text-muted ms-2">{{ post.date_created }}</span>
+          </div>
+          {% if post.tags %}
+            <div>
+              {% for t in post.tags %}
+                <a href="/blog/tags/{{ t }}.html" class="badge text-bg-secondary text-decoration-none me-1">{{ t }}</a>
+              {% endfor %}
+            </div>
+          {% endif %}
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>No posts for this tag.</p>
+  {% endif %}
+{% endblock %}

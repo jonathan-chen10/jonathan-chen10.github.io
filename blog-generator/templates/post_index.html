@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block title %}Blog — Jonathan Chen{% endblock %}
+
+{% block content %}
+  <h1>Blog</h1>
+  <hr />
+  {% if posts %}
+    <ul class="list-unstyled">
+      {% for post in posts %}
+        <li class="mb-4">
+          <div>
+            <a href="/blog/posts/{{ post.slug }}.html">{{ post.title }}</a>
+            <span class="text-muted ms-2">{{ post.date_created }}</span>
+          </div>
+          {% if post.tags %}
+            <div>
+              {% for tag in post.tags %}
+                <a href="/blog/tags/{{ tag }}.html" class="badge text-bg-secondary text-decoration-none me-1">{{ tag }}</a>
+              {% endfor %}
+            </div>
+          {% endif %}
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>No posts yet.</p>
+  {% endif %}
+{% endblock %}
