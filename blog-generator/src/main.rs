@@ -3,7 +3,6 @@ use std::fs;
 use std::path::PathBuf;
 
 use anyhow::Error;
-use serde::Deserialize;
 
 mod discover;
 mod index;
@@ -11,16 +10,12 @@ mod parse;
 mod postprocessing;
 mod types;
 mod utils;
+mod write;
 use discover::discover;
 use index::index;
 use parse::parse;
-
-#[derive(Debug, Clone, Deserialize)]
-pub struct Config {
-    input_dir: PathBuf,
-    output_dir: PathBuf,
-    templates_dir: PathBuf,
-}
+use write::write;
+use types::Config;
 
 fn main() -> Result<(), Error> {
     let config_path = args().nth(1).map(PathBuf::from)
@@ -42,6 +37,14 @@ fn main() -> Result<(), Error> {
                     println!("- {}", p.meta.title);
                 }
             }
+
+            use types::OutputFile;
+            let test_ofile = OutputFile {
+                html: "<!doctype html><html><body>testing</body></html>".to_string(),
+                path_relative: "test-write/output.html".into(),
+                path_assets: Some(config.input_dir.join("test")),
+            };
+            write(vec![test_ofile], &config.output_dir)?;
         }
         Err(e) => {
             println!("Error: {}", e);

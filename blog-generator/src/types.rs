@@ -4,6 +4,13 @@ use std::path::PathBuf;
 use chrono;
 use serde::Deserialize;
 
+#[derive(Debug, Clone, Deserialize)]
+pub struct Config {
+    pub input_dir: PathBuf,
+    pub output_dir: PathBuf,
+    pub templates_dir: PathBuf,
+}
+
 /// Represents data read from frontmatter block.
 #[derive(Debug, Clone, Deserialize)]
 pub struct Frontmatter {
@@ -30,5 +37,6 @@ pub struct SiteIndex {
 
 pub struct OutputFile {
     pub path_relative: PathBuf,
+    pub path_assets: Option<PathBuf>,
     pub html: String,
 }
