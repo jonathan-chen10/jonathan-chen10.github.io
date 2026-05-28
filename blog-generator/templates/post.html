@@ -21,6 +21,19 @@
       {% endif %}
     </header>
 
+    {% if post.toc | length > 3 %}
+      <nav id="toc" class="mb-4">
+        <strong>Contents</strong>
+        <ol>
+          {% for entry in post.toc %}
+            <li style="padding-left: {{ entry.level }}rem">
+              <a href="#{{ entry.id }}">{{ entry.text | safe }}</a>
+            </li>
+          {% endfor %}
+        </ol>
+      </nav>
+    {% endif %}
+
     <div class="post-body">
       {{ post.html | safe }}
     </div>

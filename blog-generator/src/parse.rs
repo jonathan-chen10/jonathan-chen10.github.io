@@ -29,11 +29,11 @@ fn parse_one(path: &Path) -> Result<Option<Post>> {
             }
 
             let parser = Parser::new_ext(body, Options::all());
-            let mut events: Vec<Event> = parser.map(process_special_cases).collect();
+            let events: Vec<Event> = parser.map(process_special_cases).collect();
 
             let mut html = String::new();
-            events = postprocessing::toc::apply(&events)?;
-            events = postprocessing::footnote_links::apply(&events)?;
+            let (events, toc) = postprocessing::toc::apply(&events)?;
+            let events = postprocessing::footnote_links::apply(&events)?;
             push_html(&mut html, events.into_iter());
 
             let slug = get_slug(path)?;
@@ -42,6 +42,7 @@ fn parse_one(path: &Path) -> Result<Option<Post>> {
                 meta: frontmatter,
                 html,
                 slug,
+                toc,
             }))
         }
     }

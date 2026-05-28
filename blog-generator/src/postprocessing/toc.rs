@@ -3,87 +3,54 @@ use std::collections::BTreeSet;
 use anyhow::Result;
 use pulldown_cmark::{Event, Tag, TagEnd};
 
+use crate::types::TocEntry;
 use crate::utils::slugify;
 
-#[derive(Debug, Clone)]
-struct TocEntry {
-    level: u8,
-    text: String,
-    id: String,
-}
+pub fn apply<'a>(events: &[Event<'a>]) -> Result<(Vec<Event<'a>>, Vec<TocEntry>)> {
+    let toc = normalize_levels(&build_toc(events));
 
-#[derive(Debug, Clone)]
-struct TocNode {
-    level: u8,
-    data: Option<TocEntry>,
-    children: Vec<TocNode>,
-}
+    let mut ids = toc.iter().map(|e| e.id.clone());
 
-pub fn apply<'a>(events: &[Event<'a>]) -> Result<Vec<Event<'a>>> {
-    let toc_entries = build_toc(events);
-    let toc_event = Event::Html(toc_tree_to_html(&toc_tree(&toc_entries)).into());
+    let events_with_ids = events
+        .iter()
+        .map(|event| match event {
+            Event::Start(Tag::Heading { level, classes, attrs, .. }) => {
+                Event::Start(Tag::Heading {
+                    level: *level,
+                    id: ids.next().map(Into::into),
+                    classes: classes.clone(),
+                    attrs: attrs.clone(),
+                })
+            }
+            other => other.clone(),
+        })
+        .collect();
 
-    let mut heading_ids = toc_entries.into_iter().map(|e| e.id);
-
-    let events_with_ids = events.iter().map(|event| match event {
-        Event::Start(Tag::Heading { level, classes, attrs, .. }) => {
-            Event::Start(Tag::Heading {
-                level: *level,
-                id: heading_ids.next().map(Into::into),
-                classes: classes.clone(),
-                attrs: attrs.clone(),
-            })
-        }
-        other => other.clone(),
-    });
-
-    Ok(std::iter::once(toc_event).chain(events_with_ids).collect())
+    Ok((events_with_ids, toc))
 }
 
 fn build_toc(events: &[Event<'_>]) -> Vec<TocEntry> {
     let mut out: Vec<TocEntry> = vec![];
-    let mut this_header: TocEntry = TocEntry {
-        level: 0, 
-        text: String::from(""), 
-        id: String::from("")
-    };
+    let mut current = TocEntry { level: 0, text: String::new(), id: String::new() };
     let mut in_header = false;
 
     for e in events {
         match e {
-            Event::Start(tag) => {
-                match tag {
-                    Tag::Heading { level, .. } => {
-                        in_header = true;
-                        this_header = TocEntry {
-                            level: *level as u8, 
-                            text: String::from(""), 
-                            id: String::from("")
-                        };
-                    },
-                    _ => {}
-                }
+            Event::Start(Tag::Heading { level, .. }) => {
+                in_header = true;
+                current = TocEntry { level: *level as u8, text: String::new(), id: String::new() };
             }
-            Event::End(tag) => {
-                match tag {
-                    TagEnd::Heading { .. } => {
-                        in_header = false;
-                        this_header.id = slugify(&this_header.text);
-                        out.push(this_header);
-                        this_header = TocEntry { level: 0, text: String::new(), id: String::new() };
-                    },
-                    _ => {}
-                }
+            Event::End(TagEnd::Heading { .. }) => {
+                in_header = false;
+                current.id = slugify(&current.text);
+                out.push(current);
+                current = TocEntry { level: 0, text: String::new(), id: String::new() };
             }
-            Event::Text(text) => {
-                if in_header {
-                    this_header.text = this_header.text + text;
-                }
+            Event::Text(text) if in_header => {
+                current.text.push_str(text);
             }
-            Event::Code(text) => {
-                if in_header {
-                    this_header.text = this_header.text + "<pre>" + text + "</pre>";
-                }
+            Event::Code(text) if in_header => {
+                current.text.push_str(&format!("<code>{text}</code>"));
             }
             _ => {}
         }
@@ -91,70 +58,20 @@ fn build_toc(events: &[Event<'_>]) -> Vec<TocEntry> {
     out
 }
 
-fn toc_tree(toc: &[TocEntry]) -> Vec<TocNode> {
-    let mut roots: Vec<TocNode> = Vec::new();
-    let mut stack: Vec<TocNode> = Vec::new();
-
-    let normalized = normalize_levels(&toc);
-
-    for entry in normalized {
-        let level = entry.level;
-        let node = TocNode { level: entry.level, data: Some(entry), children: vec![] };
-
-        // Pop stack until we find a node shallower than current
-        while stack.last().map_or(false, |top| top.level >= level) {
-            let top = stack.pop().unwrap();
-            // Attach to new parent, or to roots if stack is now empty
-            if let Some(parent) = stack.last_mut() {
-                parent.children.push(top);
-            } else {
-                roots.push(top);
-            }
-        }
-
-        stack.push(node);
-    }
-
-    // Drain remaining stack
-    while let Some(top) = stack.pop() {
-        if let Some(parent) = stack.last_mut() {
-            parent.children.push(top);
-        } else {
-            roots.push(top);
-        }
-    }
-
-    roots
-}
-
+/// Remaps heading levels to 0-indexed ranks so the template can use
+/// `entry.level` directly as a nesting depth (0 = top level).
 fn normalize_levels(toc: &[TocEntry]) -> Vec<TocEntry> {
-    let levels: Vec<u8> = toc.into_iter().map(|e| e.level)
-        .collect::<BTreeSet<_>>().into_iter().collect();
-    toc.into_iter().map(|e| TocEntry {
-        level: levels.iter().position(|&l| l == e.level).unwrap() as u8,
-        ..e.clone()
-    }).collect()
-}
+    let levels: Vec<u8> = toc
+        .iter()
+        .map(|e| e.level)
+        .collect::<BTreeSet<_>>()
+        .into_iter()
+        .collect();
 
-fn toc_tree_to_html(tree: &[TocNode]) -> String {
-    let items: String = tree.iter().map(|node| tree_to_li(node)).collect();
-    format!("<div id=\"toc\"><h2>Table of Contents</h2><ol>{items}</ol></div>")
-}
-
-fn tree_to_li(tree: &TocNode) -> String {
-   let (data, items) = (
-        tree.data.as_ref(),
-        tree.children.iter().map(tree_to_li).collect::<String>(),
-    );
-
-    match data {
-        None => format!("<li><ol>{items}</ol></li>"),
-        Some(data) => {
-            if tree.children.is_empty() {
-                format!("<li><a href=\"#{}\">{}</a></li>", data.id, data.text)
-            } else {
-                format!("<li><a href=\"#{}\">{}</a><ol>{items}</ol></li>", data.id, data.text)
-            }
-        }
-    }
+    toc.iter()
+        .map(|e| TocEntry {
+            level: levels.iter().position(|&l| l == e.level).unwrap() as u8,
+            ..e.clone()
+        })
+        .collect()
 }

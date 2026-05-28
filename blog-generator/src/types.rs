@@ -2,7 +2,7 @@ use std::collections::HashMap;
 use std::path::PathBuf;
 
 use chrono;
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, Deserialize)]
 pub struct Config {
@@ -22,11 +22,19 @@ pub struct Frontmatter {
     pub draft: bool
 }
 
+#[derive(Debug, Clone, Serialize)]
+pub struct TocEntry {
+    pub level: u8,
+    pub text: String,
+    pub id: String,
+}
+
 #[derive(Debug, Clone)]
 pub struct Post {
     pub meta: Frontmatter,
     pub html: String,
     pub slug: String,
+    pub toc: Vec<TocEntry>,
 }
 
 #[derive(Debug)]
