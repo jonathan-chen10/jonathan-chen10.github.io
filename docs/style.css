@@ -1,5 +1,14 @@
+:root {
+  --main-padding: 3rem;
+}
+
 body {
   background-color: #fca;
+}
+
+main {
+  margin: 0 auto;
+  padding: 1.5rem var(--main-padding) 3rem;
 }
 
 .bold {
@@ -37,6 +46,10 @@ body {
 
 a:has(.icon) {
   text-decoration: none;
+}
+
+#big-header {
+  padding: 10px var(--main-padding);
 }
 
 #big-name {

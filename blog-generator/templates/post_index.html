@@ -1,26 +1,16 @@
 {% extends "base.html" %}
+{% import "macros.html" as macros %}
 
 {% block title %}Blog — Jonathan Chen{% endblock %}
 
 {% block content %}
   <h1>Blog</h1>
+  <p><a href="tags/">All tags</a></p>
   <hr />
-  {% if posts %}
-    <ul class="list-unstyled">
+  {% if posts | length %}
+    <ul class="post-list">
       {% for post in posts %}
-        <li class="mb-4">
-          <div>
-            <a href="/blog/posts/{{ post.slug }}.html">{{ post.title }}</a>
-            <span class="text-muted ms-2">{{ post.date_created }}</span>
-          </div>
-          {% if post.tags %}
-            <div>
-              {% for tag in post.tags %}
-                <a href="/blog/tags/{{ tag }}.html" class="badge text-bg-secondary text-decoration-none me-1">{{ tag }}</a>
-              {% endfor %}
-            </div>
-          {% endif %}
-        </li>
+        {{ macros::post_card(post=post) }}
       {% endfor %}
     </ul>
   {% else %}

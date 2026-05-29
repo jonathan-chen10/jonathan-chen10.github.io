@@ -1,27 +1,16 @@
 {% extends "base.html" %}
+{% import "macros.html" as macros %}
 
-{% block title %}#{{ tag }} — Jonathan Chen{% endblock %}
+{% block title %}#{{ tag.name }} — Jonathan Chen{% endblock %}
 
 {% block content %}
-  <h1>#{{ tag }}</h1>
+  <h1>#{{ tag.name }} ({{ tag.count }} posts)</h1>
   <p><a href="/blog/tags/">All tags</a></p>
   <hr />
-  {% if posts %}
-    <ul class="list-unstyled">
+  {% if posts | length %}
+    <ul class="post-list">
       {% for post in posts %}
-        <li class="mb-4">
-          <div>
-            <a href="/blog/posts/{{ post.slug }}.html">{{ post.title }}</a>
-            <span class="text-muted ms-2">{{ post.date_created }}</span>
-          </div>
-          {% if post.tags %}
-            <div>
-              {% for t in post.tags %}
-                <a href="/blog/tags/{{ t }}.html" class="badge text-bg-secondary text-decoration-none me-1">{{ t }}</a>
-              {% endfor %}
-            </div>
-          {% endif %}
-        </li>
+        {{ macros::post_card(post=post) }}
       {% endfor %}
     </ul>
   {% else %}

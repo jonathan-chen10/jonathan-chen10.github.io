@@ -1,0 +1,22 @@
+{% macro tag_badges(tags) %}
+  {% if tags | length %}
+    <div>
+      {% for tag in tags %}
+        <a href="/blog/tags/{{ tag }}/" class="tag-badge">{{ tag }}</a>
+      {% endfor %}
+    </div>
+  {% endif %}
+{% endmacro %}
+
+{% macro post_card(post) %}
+  <li class="post-card">
+    <div>
+      <a href="/blog/posts/{{ post.slug }}/">{{ post.title }}</a>
+      <span class="post-date">{{ post.date_created }}</span>
+    </div>
+    {% if post.blurb %}
+      <div>{{ post.blurb }}</div>
+    {% endif %}
+    {{ self::tag_badges(tags=post.tags) }}
+  </li>
+{% endmacro %}

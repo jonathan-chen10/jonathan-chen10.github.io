@@ -18,6 +18,7 @@ pub struct Frontmatter {
     pub date_created: chrono::NaiveDate,
     pub date_modified: Option<chrono::NaiveDate>,
     pub tags: Vec<String>,
+    pub blurb: Option<String>,
     #[serde(default)]
     pub draft: bool
 }

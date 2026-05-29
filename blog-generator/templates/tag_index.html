@@ -5,12 +5,12 @@
 {% block content %}
   <h1>Tags</h1>
   <hr />
-  {% if tags %}
-    <ul class="list-unstyled">
+  {% if tags | length  %}
+    <ul class="tag-list">
       {% for tag in tags %}
-        <li class="mb-2">
-          <a href="/blog/tags/{{ tag.name }}.html">#{{ tag.name }}</a>
-          <span class="text-muted ms-1">({{ tag.count }})</span>
+        <li class="tag-item">
+          <a href="/blog/tags/{{ tag.name }}/">#{{ tag.name }}</a>
+          <span class="tag-count">({{ tag.count }})</span>
         </li>
       {% endfor %}
     </ul>

@@ -8,12 +8,15 @@ mod discover;
 mod index;
 mod parse;
 mod postprocessing;
+mod render;
 mod types;
 mod utils;
 mod write;
 use discover::discover;
 use index::index;
 use parse::parse;
+use render::render;
+use tera::Tera;
 use write::write;
 use types::Config;
 
@@ -24,31 +27,19 @@ fn main() -> Result<(), Error> {
     let config_str = fs::read_to_string(&config_path)?;
     let config: Config = toml::from_str(&config_str)?;
 
-    match parse(&discover(&config.input_dir)) {
-        Ok(res) => {
-            let idx = index(res);
-            for p in &idx.posts {
-                println!("{}", p.meta.title);
-            }
-            println!();
-            for (tag, posts) in &idx.tags {
-                println!("{} :", tag);
-                for p in posts {
-                    println!("- {}", p.meta.title);
-                }
-            }
+    let res = parse(&discover(&config.input_dir))?;
+    let tera = Tera::new(
+        config.templates_dir.join("*")
+            .to_str()
+            .ok_or_else(|| anyhow::anyhow!("templates_dir path could not be read"))?
+    )?;
 
-            use types::OutputFile;
-            let test_ofile = OutputFile {
-                html: "<!doctype html><html><body>testing</body></html>".to_string(),
-                path_relative: "test-write/output.html".into(),
-                path_assets: Some(config.input_dir.join("test")),
-            };
-            write(vec![test_ofile], &config.output_dir)?;
-        }
-        Err(e) => {
-            println!("Error: {}", e);
-        }
-    }
+    let site_index = index(res);
+    let pages_to_write = render(&site_index, &tera, &config.input_dir)?;
+    write(
+        pages_to_write,
+        &config.output_dir
+    )?;
+    
     Ok(())
 }

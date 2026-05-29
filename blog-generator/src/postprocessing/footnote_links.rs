@@ -12,7 +12,7 @@ pub fn apply<'a>(events: &[Event<'a>]) -> Result<Vec<Event<'a>>> {
     for event in events {
         match event {
             Event::FootnoteReference(label) => {
-                let n = references[label.as_ref()];
+                let n = references.get(label.as_ref()).copied().expect("footnote number to be extracted correctly");
                 output.push(Event::Html(
                     format!("<sup><a id=\"fnref-{label}\" href=\"#fn-{label}\">{n}</a></sup>").into()
                 ));

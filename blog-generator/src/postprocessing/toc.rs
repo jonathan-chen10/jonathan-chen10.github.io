@@ -32,6 +32,7 @@ pub fn apply<'a>(events: &[Event<'a>]) -> Result<(Vec<Event<'a>>, Vec<TocEntry>)
 fn build_toc(events: &[Event<'_>]) -> Vec<TocEntry> {
     let mut out: Vec<TocEntry> = vec![];
     let mut current = TocEntry { level: 0, text: String::new(), id: String::new() };
+    let mut plain_text = String::new();
     let mut in_header = false;
 
     for e in events {
@@ -39,18 +40,21 @@ fn build_toc(events: &[Event<'_>]) -> Vec<TocEntry> {
             Event::Start(Tag::Heading { level, .. }) => {
                 in_header = true;
                 current = TocEntry { level: *level as u8, text: String::new(), id: String::new() };
+                plain_text.clear();
             }
             Event::End(TagEnd::Heading { .. }) => {
                 in_header = false;
-                current.id = slugify(&current.text);
+                current.id = slugify(&plain_text);
                 out.push(current);
                 current = TocEntry { level: 0, text: String::new(), id: String::new() };
             }
             Event::Text(text) if in_header => {
                 current.text.push_str(text);
+                plain_text.push_str(text);
             }
             Event::Code(text) if in_header => {
                 current.text.push_str(&format!("<code>{text}</code>"));
+                plain_text.push_str(text);
             }
             _ => {}
         }
@@ -70,7 +74,7 @@ fn normalize_levels(toc: &[TocEntry]) -> Vec<TocEntry> {
 
     toc.iter()
         .map(|e| TocEntry {
-            level: levels.iter().position(|&l| l == e.level).unwrap() as u8,
+            level: levels.iter().position(|&l| l == e.level).unwrap() as u8, // guaranteed to be there by construction
             ..e.clone()
         })
         .collect()

@@ -40,7 +40,7 @@ pub fn write(files: Vec<OutputFile>, output_dir: &Path) -> Result<()> {
                             .join(relative)
                     );
                     fs::create_dir_all(dest.parent().unwrap())?;
-                    fs::copy(path, &dest)?;
+                    fs::copy(path, &dest).with_context(|| format!("error when copying from {} to {}", path.display(), dest.display()))?;
                 }
             }
         }
