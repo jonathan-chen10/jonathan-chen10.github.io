@@ -35,6 +35,8 @@ draft: false # will not generate if true
 ---
 ```
 
+If no frontmatter is present, it will be silently ignored as if it was a draft.
+
 A variety of different Markdown features are supported, thanks to the `pushdown-cmark` library. I have extended this with jumpable footnotes and KaTeX also.
 
 ## Description
