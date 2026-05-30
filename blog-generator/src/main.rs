@@ -3,6 +3,7 @@ use std::fs;
 use std::path::PathBuf;
 
 use anyhow::Error;
+use tera::Tera;
 
 mod discover;
 mod index;
@@ -16,7 +17,6 @@ use discover::discover;
 use index::index;
 use parse::parse;
 use render::render;
-use tera::Tera;
 use write::write;
 use types::Config;
 
