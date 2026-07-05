@@ -2,3 +2,13 @@ name = "blog"
 input_dir = "blog"
 output_dir = "docs/blog"
 templates_dir = "blog-generator/templates"
+
+[[tag_categories]]
+name  = "language"
+color = "#3b82f6"
+tags  = ["rust"]
+
+[[tag_categories]]
+name  = "project"
+color = "#f97316"
+tags  = []

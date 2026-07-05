@@ -35,7 +35,7 @@ fn main() -> Result<(), Error> {
     )?;
 
     let site_index = index(res);
-    let pages_to_write = render(&site_index, &tera, &config.input_dir)?;
+    let pages_to_write = render(&site_index, &tera, &config.tag_categories, &config.input_dir)?;
     write(
         pages_to_write,
         &config.output_dir

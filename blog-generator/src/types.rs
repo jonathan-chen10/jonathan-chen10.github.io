@@ -9,6 +9,8 @@ pub struct Config {
     pub input_dir: PathBuf,
     pub output_dir: PathBuf,
     pub templates_dir: PathBuf,
+    #[serde(default)]
+    pub tag_categories: Vec<TagCategory>,
 }
 
 /// Represents data read from frontmatter block.
@@ -48,4 +50,32 @@ pub struct OutputFile {
     pub path_relative: PathBuf,
     pub path_assets: Option<PathBuf>,
     pub html: String,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Deserialize)]
+pub struct Color(pub String);
+
+impl Color {
+    pub fn new(css_color: impl Into<String>) -> Self {
+        Self(css_color.into())
+    }
+}
+
+impl AsRef<str> for Color {
+    fn as_ref(&self) -> &str {
+        &self.0
+    }
+}
+
+impl From<Color> for String {
+    fn from(color: Color) -> Self {
+        color.0
+    }
+}
+
+#[derive(Debug, Clone, Deserialize)]
+pub struct TagCategory {
+    pub name: String,
+    pub color: Color,
+    pub tags: Vec<String>,
 }

@@ -1,11 +1,16 @@
+<!-- Duck typed so TeraTag and TeraTagBasic both work-->
 {% macro tag_badges(tags) %}
   {% if tags | length %}
     <div>
       {% for tag in tags %}
-        <a href="/blog/tags/{{ tag }}/" class="tag-badge">{{ tag }}</a>
+        {{ self::tag_badge(tag=tag) }}
       {% endfor %}
     </div>
   {% endif %}
+{% endmacro %}
+
+{% macro tag_badge(tag) %}
+  <a href="/blog/tags/{{ tag.name }}/" class="tag-badge" style="background: {{ tag.color }}">{{ tag.name }}</a>
 {% endmacro %}
 
 {% macro post_card(post) %}

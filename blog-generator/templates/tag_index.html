@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% import "macros.html" as macros %}
 
 {% block title %}Tags | Jonathan Chen{% endblock %}
 
@@ -9,7 +10,7 @@
     <ul class="tag-list">
       {% for tag in tags %}
         <li class="tag-item">
-          <a href="/blog/tags/{{ tag.name }}/">#{{ tag.name }}</a>
+          {{ macros::tag_badge(tag=tag) }}
           <span class="tag-count">({{ tag.count }})</span>
         </li>
       {% endfor %}
