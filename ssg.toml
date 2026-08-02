@@ -1,4 +1,3 @@
-name = "blog"
 input_dir = "blog"
 output_dir = "docs/blog"
 templates_dir = "blog-generator/templates"

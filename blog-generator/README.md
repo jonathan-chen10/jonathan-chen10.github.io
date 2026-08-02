@@ -8,7 +8,18 @@ A small blog generator for this website.
 cargo run <config.toml>
 ```
 
-The config should contain paths necessary to build the path in particular `input_dir`, `output_dir`, and `templates_dir`.
+`config.toml` should look like
+
+```yaml
+input_dir = "path/to/markdown/blog/root"
+output_dir = "path/to/html/output/root"
+templates_dir = "path/to/templates"
+
+[[tag_categories]]
+name  = "name of tag group"
+color = "CSS color of tag"
+tags  = ["tags", "included", "in", "this", "category"]
+```
 
 Look at [`../generate-blog.sh`](../generate-blog.sh) and [`../ssg.toml`](../ssg.toml) for an example.
 
